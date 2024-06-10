@@ -10,7 +10,7 @@ export default function App() {
     email:"",
     password:"",
     phoneNo:"",
-    country:"Select Country",
+    country:"",
     state:"",
     city:"",
     panNo:"",
@@ -62,6 +62,16 @@ export default function App() {
   const validate=(values)=>{
     const errors={};
     const regex=/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/i;
+    const phone_regex=/^[6-9]\d{9}$/;
+    const panRegex=/^[A-Z]{5}[0-9]{4}[A-Z]{1}/;
+    const aadharRegex=/^[2-9]{1}[0-9]{11}$/;
+ 
+    if(!values.firstName){
+      errors.firstName="First name is required";
+    }
+    if(!values.lastName){
+      errors.lastName="Last name is required";
+    }
     if(!values.username){
       errors.username="Username is required";
     }
@@ -78,6 +88,30 @@ export default function App() {
     }else if(values.password.length>10){
       errors.password="Password must be less than 10 characters ";
     }
+    if(!values.phoneNo){
+      errors.phoneNo="Phone number is required";
+    }else if(!phone_regex.test(values.phoneNo)){
+      errors.phoneNo="Please enter a valid phone number";
+    }
+    if(!values.country){
+      errors.country="Country is required";
+    }
+    if(!values.state){
+      errors.state="State is required";
+    }
+    if(!values.city){
+      errors.city="City is required";
+    }
+    if(!values.panNo){
+      errors.panNo="Pan-No is required";
+    }else if(!panRegex.test(values.panNo)){
+      errors.panNo="Please enter a valid pan number";
+    }
+    if(!values.aadharNo){
+      errors.aadharNo="Aadhar-No is required";
+    }else if(!aadharRegex.test(values.aadharNo)){
+      errors.aadharNo="Please enter a valid aadhar number";
+    }
     return errors;
   }
   return (
@@ -86,9 +120,11 @@ export default function App() {
       <form className="space-y-2" onSubmit={submitHandler}>
       <label className="text-gray-900 leading-6 text-sm font-medium"  htmlFor='firstName'>First Name </label><br/>
       <input className="w-full border mt-2 rounded-md  p-2 text-gray-900 shadow-sm ring-1 placeholder:text-gray-400  placeholder:font-normal"  onChange={changeHandler} type='text' name='firstName' id="firstName" placeholder="first name" value={formData.firstName}></input><br/>
+      <p className='text-red-500'>{formErrors.firstName}</p>
 
       <label className="text-gray-900 leading-6 text-sm font-medium" htmlFor='lastName'>Last Name </label><br/>
       <input className="w-full border mt-2 rounded-md  p-2 text-gray-900 shadow-sm ring-1 placeholder:text-gray-400 placeholder:font-normal" onChange={changeHandler} type='text' name='lastName' id="lastName" placeholder="last name" value={formData.lastName}></input><br/>
+      <p className='text-red-500'>{formErrors.lastName}</p>
 
       <label className="text-gray-900 leading-6 text-sm font-medium" htmlFor='email'>Username </label><br/>
       <input className="w-full border mt-2 rounded-md  p-2 text-gray-900 shadow-sm ring-1 placeholder:text-gray-400 placeholder:font-normal" onChange={changeHandler} type='text' name='username' id="username" placeholder="akg56" value={formData.username}></input><br/>
@@ -103,8 +139,8 @@ export default function App() {
       <p className='text-red-500'>{formErrors.password}</p>
 
       <label className="text-gray-900 leading-6 text-sm font-medium" htmlFor='phoneNo'>PhoneNo</label><br/>
-      <input className="w-full border mt-2 rounded-md  p-2 text-gray-900 shadow-sm ring-1 placeholder:text-gray-400 placeholder:font-normal" onChange={changeHandler} type='tel' name='phoneNo' id="phoneNo" placeholder="+91-8799xxxxxx" value={formData.phoneNo}></input><br/>
-      
+      <input className="w-full border mt-2 rounded-md  p-2 text-gray-900 shadow-sm ring-1 placeholder:text-gray-400 placeholder:font-normal" onChange={changeHandler} type='tel' name='phoneNo' id="phoneNo" placeholder="8799xxxxxx" value={formData.phoneNo}></input><br/>
+      <p className='text-red-500'>{formErrors.phoneNo}</p>
 
       <label className="text-gray-900 leading-6 text-sm font-medium" htmlFor='country'>Country</label><br/>
       <select onChange={changeCountry} className="w-full border mt-2 rounded-md  p-2 text-gray-900 shadow-sm ring-1 placeholder:text-gray-400 placeholder:font-normal" value={formData.country} name='country' id='country'>
@@ -114,14 +150,17 @@ export default function App() {
             return <option key={country.id} value={country.name}>{country.name}</option>
           })
         }
-      </select><br/>
+      </select>
+      <p className='text-red-500'>{formErrors.country}</p>
+      <br/>
 
       <label className="text-gray-900 leading-6 text-sm font-medium" htmlFor='state'>State</label><br/>
       <select onChange={changeState} className="w-full border mt-2 rounded-md  p-2 text-gray-900 shadow-sm ring-1 placeholder:text-gray-400 placeholder:font-normal" value={formData.state} name='state' id='state'>
         {states.map((state)=>{
           return <option key={state.id} value={state.name}>{state.name}</option>
         })}
-      </select><br/>
+      </select>
+      <p className='text-red-500'>{formErrors.state}</p><br/>
 
 
       <label className="text-gray-900 leading-6 text-sm font-medium" htmlFor='city'>City</label><br/>
@@ -131,15 +170,20 @@ export default function App() {
             return <option key={city.id} value={city.name}>{city.name}</option>
           })
         }
-      </select><br/>
+      </select>
+      <p className='text-red-500'>{formErrors.city}</p><br/>
 
       <label className="text-gray-900 leading-6 text-sm font-medium" htmlFor='panNo'>Pan-No</label><br/>
       <input className="w-full border mt-2 rounded-md  p-2 text-gray-900 shadow-sm ring-1 placeholder:text-gray-400 placeholder:font-normal" onChange={changeHandler} type='text' name='panNo' id="panNo" placeholder="ABCTY1234D" value={formData.panNo}></input><br/>
-      
+      <p className='text-red-500'>{formErrors.panNo}</p>
+
       <label className="text-gray-900 leading-6 text-sm font-medium" htmlFor='aadharNo'>Aadhar-No</label><br/>
       <input className="w-full border mt-2 rounded-md  p-2 text-gray-900 shadow-sm ring-1 placeholder:text-gray-400 placeholder:font-normal" onChange={changeHandler} type='number' name='aadharNo' id="aadharNo" placeholder="2653 8564 4663" value={formData.aadharNo}></input><br/>
+      <p className='text-red-500'>{formErrors.aadharNo}</p>
+      
       <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Submit</button>
           {Object.keys(formErrors).length===0 && isSubmit ? (<div>Signed in sucessfully!</div>):("")}
+      
       </form>
     </div>
   )
