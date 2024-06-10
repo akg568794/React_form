@@ -1,5 +1,5 @@
 import './App.css';
-import React,{useState} from 'react'
+import React,{useEffect, useState} from 'react'
 import {countries} from "./Data";
 
 export default function App() {
@@ -7,7 +7,7 @@ export default function App() {
     firstName:"",
     lastName:"",
     username:"",
-    email:" ",
+    email:"",
     password:"",
     phoneNo:"",
     country:"Select Country",
@@ -17,9 +17,13 @@ export default function App() {
     aadharNo:""
 
   })
+  // const initialValues={username:"",email:"",password:""}
+  // const [formValues,setFormValues]=useState(initialValues);
 
   const [states,setStates]=useState([]);
   const [cities,setCities]=useState([]);
+  const [formErrors,setFormErrors]=useState({});
+  const [isSubmit,setIsSubmit]=useState(false);
 
   function changeHandler(event){
     const {name,value,checked, type}=event.target;
@@ -42,7 +46,39 @@ export default function App() {
 
   function submitHandler(event){
     event.preventDefault();
-    console.log(formData);
+    setFormErrors(validate(formData));
+    setIsSubmit(true);
+    // console.log(formData);
+  }
+
+  useEffect(()=>{
+    console.log(formErrors);
+    if(Object.keys(formErrors).length===0 && isSubmit){
+      alert("Form submitted");
+    }
+  },[formErrors]);
+
+
+  const validate=(values)=>{
+    const errors={};
+    const regex=/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/i;
+    if(!values.username){
+      errors.username="Username is required";
+    }
+    if(!values.email){
+      errors.email="Email is required";
+    }else if(!regex.test(values.email)){
+      errors.email="Please enter a valid email address"
+    }
+    
+    if(!values.password){
+      errors.password="Password is required";
+    }else if(values.password.length<4){
+      errors.password="Password must be more than 4 characters ";
+    }else if(values.password.length>10){
+      errors.password="Password must be less than 10 characters ";
+    }
+    return errors;
   }
   return (
     <div className='w-full md:max-w-[50%] mx-auto shadow p-8 '>
@@ -56,19 +92,23 @@ export default function App() {
 
       <label className="text-gray-900 leading-6 text-sm font-medium" htmlFor='email'>Username </label><br/>
       <input className="w-full border mt-2 rounded-md  p-2 text-gray-900 shadow-sm ring-1 placeholder:text-gray-400 placeholder:font-normal" onChange={changeHandler} type='text' name='username' id="username" placeholder="akg56" value={formData.username}></input><br/>
+      <p className='text-red-500'>{formErrors.username}</p>
 
       <label className="text-gray-900 leading-6 text-sm font-medium" htmlFor='email'>Email</label><br/>
       <input className="w-full border mt-2 rounded-md  p-2 text-gray-900 shadow-sm ring-1 placeholder:text-gray-400 placeholder:font-normal" onChange={changeHandler} type='email' name='email' id="email" placeholder="abc@gmail.com" value={formData.email}></input><br/>
-      
+      <p className='text-red-500'>{formErrors.email}</p>
+
       <label className="text-gray-900 leading-6 text-sm font-medium" htmlFor='password'>Password</label><br/>
       <input className="w-full border mt-2 rounded-md  p-2 text-gray-900 shadow-sm ring-1 placeholder:text-gray-400 placeholder:font-normal" onChange={changeHandler} type='password' name='password' id="password" placeholder="" value={formData.password}></input><br/>
-      
+      <p className='text-red-500'>{formErrors.password}</p>
+
       <label className="text-gray-900 leading-6 text-sm font-medium" htmlFor='phoneNo'>PhoneNo</label><br/>
       <input className="w-full border mt-2 rounded-md  p-2 text-gray-900 shadow-sm ring-1 placeholder:text-gray-400 placeholder:font-normal" onChange={changeHandler} type='tel' name='phoneNo' id="phoneNo" placeholder="+91-8799xxxxxx" value={formData.phoneNo}></input><br/>
       
 
       <label className="text-gray-900 leading-6 text-sm font-medium" htmlFor='country'>Country</label><br/>
       <select onChange={changeCountry} className="w-full border mt-2 rounded-md  p-2 text-gray-900 shadow-sm ring-1 placeholder:text-gray-400 placeholder:font-normal" value={formData.country} name='country' id='country'>
+        <option>--Select Country--</option>
         {
           countries.map((country)=>{
             return <option key={country.id} value={country.name}>{country.name}</option>
@@ -99,7 +139,7 @@ export default function App() {
       <label className="text-gray-900 leading-6 text-sm font-medium" htmlFor='aadharNo'>Aadhar-No</label><br/>
       <input className="w-full border mt-2 rounded-md  p-2 text-gray-900 shadow-sm ring-1 placeholder:text-gray-400 placeholder:font-normal" onChange={changeHandler} type='number' name='aadharNo' id="aadharNo" placeholder="2653 8564 4663" value={formData.aadharNo}></input><br/>
       <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Submit</button>
-          
+          {Object.keys(formErrors).length===0 && isSubmit ? (<div>Signed in sucessfully!</div>):("")}
       </form>
     </div>
   )
